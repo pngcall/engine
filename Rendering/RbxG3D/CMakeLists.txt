@@ -1,7 +1,4 @@
-include(Boost)
 include(App)
-
-include_project_files(RbxG3D "*")
 
 include_directories(include)
 include_directories(../g3d/include)

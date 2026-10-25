@@ -6,16 +6,13 @@
 #include <vector>
 #include <stdexcept>
 
-// NOTE: After removal of this fast flag, remove the HTW3C.h file and all libwww references everywhere
-DYNAMIC_FASTFLAG(UseNewUrlClass);
-
 namespace RBX
 {
 
 /* A class for parsing and assembling URLs with focus mostly on HTTP-specific subset of RFC3986.
  *
  * Works with strings having the following form:
- * https://www.finobe.ru/very/long/path?query&arg=value#fragment
+ * https://www.roblox.com/very/long/path?query&arg=value#fragment
  * \___/   \____________/\_____________/ \_____________/ \______/
  *   |           |             |                |           |
  * scheme       host          path            query      fragment
@@ -87,9 +84,9 @@ public:
     }
 
     // Check whether the current host() is a subdomain of provided domain name.
-    // - "www.finobe.ru" is a subdomain of "finobe.ru"
-    // - "finobe.ru" is a subdomain of "finobe.ru"
-    // - "notfinobe.ru" is not a subdomain of "finobe.ru"
+    // - "www.roblox.com" is a subdomain of "roblox.com"
+    // - "roblox.com" is a subdomain of "roblox.com"
+    // - "notroblox.com" is not a subdomain of "roblox.com"
     // Domain names are case insensitive
     bool isSubdomainOf(const char* domain) const;
     

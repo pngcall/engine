@@ -45,7 +45,6 @@
 #include "v8world/World.h"
 
 #include <boost/scoped_ptr.hpp>
-#include "VMProtectSDK.h"
 #include "Replicator.StreamJob.h"
 #include "Replicator.HashItem.h"
 #include "Replicator.TagItem.h"
@@ -151,7 +150,7 @@ namespace RBX { namespace Network {
         void doScans(unsigned int scanMask)
         {
 #if defined(_WIN32) && !defined(_NOOPT) && !defined(_DEBUG)
-            VMProtectBeginMutation(NULL);
+            //VMProtectBeginMutation(NULL);
             bool isCeDetectedLocal = false;
             DataModel* dataModel = DataModel::get(clientReplicator.get());
             if (scanMask & kCeDll)
@@ -184,14 +183,14 @@ namespace RBX { namespace Network {
                 RBX::Tokens::simpleToken |= HATE_SPEEDHACK;
             }
 #endif
-            VMProtectEnd();
-            VMProtectBeginVirtualization(NULL);
+            //VMProtectEnd();
+            //VMProtectBeginVirtualization(NULL);
             if(ceDetected || isCeDetectedLocal)
             {
                 dataModel->addHackFlag(HATE_CHEATENGINE_OLD);
                 RBX::Tokens::sendStatsToken.addFlagSafe(HATE_CHEATENGINE_OLD);
             }
-            VMProtectEnd();
+            //VMProtectEnd();
             #endif
         }
 
@@ -215,11 +214,11 @@ namespace RBX { namespace Network {
 
         virtual TaskScheduler::StepResult stepDataModelJob(const Stats& stats) 
         { 
-            VMProtectBeginMutation("27");
+            //VMProtectBeginMutation("27");
             doScans(1<<scanCounter);
             lastRunTime = Time::nowFast();
             scanCounter = (scanCounter + 1) % kNumScans;
-            VMProtectEnd();
+            //VMProtectEnd();
             return TaskScheduler::Stepped;
         }
 
@@ -278,7 +277,7 @@ namespace RBX { namespace Network {
 
 		virtual TaskScheduler::StepResult stepDataModelJob(const Stats& stats) 
 		{
-			VMProtectBeginMutation(NULL);
+			//VMProtectBeginMutation(NULL);
             bool isHsceHashFail = false;
             bool isLuaLockFail = false;
             bool isHsceUnitFail = false;
@@ -339,8 +338,8 @@ namespace RBX { namespace Network {
             // this is to detect DBVM's changes to this part of the program.
             isHsceUnitFail = (hsceFakeHumanoidState->checkComputeEvent() != HUMAN::HumanoidState::kCorrectCheckValue);
 
-			VMProtectEnd();
-            VMProtectBeginVirtualization(NULL);
+			//VMProtectEnd();
+            //VMProtectBeginVirtualization(NULL);
             if (codeChanged)
             {
                 RBX::Security::setHackFlagVmp<LINE_RAND4>(RBX::Security::hackFlag1, HATE_MEMORY_HASH_CHANGED);
@@ -361,7 +360,7 @@ namespace RBX { namespace Network {
             {
                 RBX::Security::setHackFlagVmp<LINE_RAND4>(RBX::Security::hackFlag5, HATE_HSCE_HASH_CHANGED);
             }
-			VMProtectEnd();
+			//VMProtectEnd();
 			return TaskScheduler::Stepped;
 		}
 
@@ -445,7 +444,7 @@ namespace RBX { namespace Network {
 
 		virtual TaskScheduler::StepResult stepDataModelJob(const Stats& stats) 
 		{
-			VMProtectBeginMutation(NULL);
+			//VMProtectBeginMutation(NULL);
             bool isBadTextSection = false;
             bool isBadVmpSection = false;
             bool isBadRdataSection = false;
@@ -502,8 +501,8 @@ namespace RBX { namespace Network {
                     isFreeConsoleHooked =  true;
                 }
             }
-			VMProtectEnd();
-            VMProtectBeginVirtualization(NULL);
+			//VMProtectEnd();
+            //VMProtectBeginVirtualization(NULL);
             if (isBadTextSection)
             {
                 RBX::Security::setHackFlagVmp<LINE_RAND4>(RBX::Security::hackFlag4, HATE_NEW_AV_CHECK);
@@ -550,7 +549,7 @@ namespace RBX { namespace Network {
             {
                 encodedReport ^= kGf2EncodeLut[MCC_FAKE_FFLAG_IDX];
             }
-			VMProtectEnd();
+			//VMProtectEnd();
 			return TaskScheduler::Stepped;
         }
 	};
@@ -1714,7 +1713,7 @@ void ClientReplicator::onServiceProvider(ServiceProvider* oldProvider, ServicePr
 	if (newProvider)
 	{ 
 #if !defined(RBX_STUDIO_BUILD)
-        VMProtectBeginMutation("30");
+        //VMProtectBeginMutation("30");
 #if !defined(LOVE_ALL_ACCESS) && defined(_WIN32) && !defined(RBX_PLATFORM_DURANGO)
         badAppCheckerJob.reset(new BadAppCheckerJob(shared_from(this)));
         TaskScheduler::singleton().add(badAppCheckerJob);
@@ -1731,7 +1730,7 @@ void ClientReplicator::onServiceProvider(ServiceProvider* oldProvider, ServicePr
         hashReadyConnection = memoryCheckerJob->hashReadySignal.connect(boost::bind(&ClientReplicator::onHashReady, this));
         mccReadyConnection = memoryCheckerCheckerJob->reportReadySignal.connect(boost::bind(&ClientReplicator::onMccReady, this));
 #endif
-        VMProtectEnd();
+        //VMProtectEnd();
 #endif
 	}
 }

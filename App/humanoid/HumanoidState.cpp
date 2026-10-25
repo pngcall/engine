@@ -45,7 +45,6 @@
 #include "Security/FuzzyTokens.h"
 #include "Security/JunkCode.h"
 
-#include "VMProtectSDK.h"
 
 DYNAMIC_FASTFLAGVARIABLE(HumanoidFloorPVUpdateSignal, false)
 DYNAMIC_FASTFLAGVARIABLE(NoWalkAnimWeld, false)
@@ -751,7 +750,7 @@ void HumanoidState::changeState(shared_ptr<HumanoidState>& state, StateType newT
 
 void HumanoidState::doSimulatorStateTable(shared_ptr<HumanoidState>& state, float dt)
 {
-    VMProtectBeginMutation(NULL);
+    //VMProtectBeginMutation(NULL);
     bool isBadNvReg = false;
     bool isBadType = false;
 
@@ -792,8 +791,8 @@ void HumanoidState::doSimulatorStateTable(shared_ptr<HumanoidState>& state, floa
         isBadNvReg = isBadNvReg || (e != eBackup || newType != newTypeBackup) // exploit: nv reg changed
             || (newType != getStateFast(oldType, e));   // exploit: invalid table jump
 	}
-    VMProtectEnd();
-    VMProtectBeginVirtualization(NULL);
+    //VMProtectEnd();
+    //VMProtectBeginVirtualization(NULL);
     if (oldType != oldTypeSecurityBackup)
     {
         Tokens::sendStatsToken.addFlagFast(HATE_HSCE_EBX);
@@ -809,7 +808,7 @@ void HumanoidState::doSimulatorStateTable(shared_ptr<HumanoidState>& state, floa
         Tokens::simpleToken |= HATE_HSCE_EBX;
         RBX::Security::setHackFlagVmp<LINE_RAND1>(RBX::Security::hackFlag7, HATE_HSCE_EBX);
     }
-    VMProtectEnd();
+    //VMProtectEnd();
 }
 
 void HumanoidState::doSlaveStateTable(shared_ptr<HumanoidState>& state, StateType newType)
@@ -1811,7 +1810,7 @@ void HumanoidState::setNearlyTouched()
 // prevent inlining of computeEvent
 unsigned int HumanoidState::checkComputeEvent()
 {
-    VMProtectBeginMutation(NULL);
+    //VMProtectBeginMutation(NULL);
     // these all return true:
     torsoHasBuoyancy = true;
     facingLadder = true;
@@ -1831,7 +1830,7 @@ unsigned int HumanoidState::checkComputeEvent()
         || computeEvent(PLATFORM_STAND_CMD) || computeEvent(FACE_LDR));
 
     volatile unsigned int returnValue = static_cast<unsigned int>(positiveTests) + static_cast<unsigned int>(negativeTests);
-    VMProtectEnd();
+    //VMProtectEnd();
     return returnValue;
 }
 #pragma optimize("", on)

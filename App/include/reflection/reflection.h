@@ -8,7 +8,7 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
 
-#if defined RBX_PLATFORM_IOS
+#if defined(__linux) || defined(__APPLE__)
 #define NULL_FUNCTION_PTR typeof(NULL)
 #else
 #define NULL_FUNCTION_PTR int

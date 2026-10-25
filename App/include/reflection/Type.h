@@ -7,6 +7,7 @@
 #include <util/utilities.h>
 
 #include <boost/unordered_map.hpp>
+#include <boost/type_traits/is_float.hpp>
 #include <list>
 
 

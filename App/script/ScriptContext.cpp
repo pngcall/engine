@@ -51,7 +51,6 @@
 #include <lstate.h>
 #include <ldebug.h>
 
-#include "VMProtectSDK.h"
 
 #include "rbx/Profiler.h"
 
@@ -1362,7 +1361,7 @@ std::auto_ptr<Reflection::Tuple> ScriptContext::executeInNewThread(
 		RBX::Security::Identities identity, const ProtectedString& script,
 		const char* name, const Reflection::Tuple& arguments)
 {
-	VMProtectBeginMutation("1");
+	//VMProtectBeginMutation("1");
 	std::auto_ptr<Reflection::Tuple> result;
 	executeInNewThread(
 		identity, 
@@ -1372,7 +1371,7 @@ std::auto_ptr<Reflection::Tuple> ScriptContext::executeInNewThread(
 		boost::bind(&readResults, boost::ref(result), _1, _2),
 		Scripts::Continuations()
 		);
-	VMProtectEnd();
+	//VMProtectEnd();
 
 	return result;
 }
@@ -1381,7 +1380,7 @@ void ScriptContext::executeInNewThreadWithExtraGlobals(
 	RBX::Security::Identities identity, const ProtectedString& script,
 	const char* name, const std::map<std::string, shared_ptr<Instance> >& extraGlobals)
 {
-	VMProtectBeginMutation("2");
+	//VMProtectBeginMutation("2");
 	executeInNewThread(
 		identity,
 		script,
@@ -1391,7 +1390,7 @@ void ScriptContext::executeInNewThreadWithExtraGlobals(
 		Scripts::Continuations(),
 		NULL,
 		&extraGlobals);
-	VMProtectEnd();
+	//VMProtectEnd();
 }
 
 Lua::Continuations::Continuations(const Scripts::Continuations& eh)
@@ -1434,7 +1433,7 @@ void ScriptContext::executeInNewThread(RBX::Security::Identities identity, const
 {
 	
 #if defined(_WIN32) && !defined(RBX_STUDIO_BUILD)
-    VMProtectBeginMutation("3");
+    //VMProtectBeginMutation("3");
 	// check xxhash integrity
 	static const char* kXHIntData = STRING_BY_ID(ExecScriptNewThread);
 	static const unsigned int kIntermediateGolden = 976374109;
@@ -1460,7 +1459,7 @@ void ScriptContext::executeInNewThread(RBX::Security::Identities identity, const
     const bool isCmdLine = (identity==RBX::Security::CmdLine_);
     const bool clSandboxEmpty = (commandLineSandbox.empty());
 #if defined(_WIN32) && !defined(RBX_STUDIO_BUILD)
-    VMProtectEnd();
+    //VMProtectEnd();
 #endif
 
 	if (isCmdLine)
@@ -1526,13 +1525,13 @@ void ScriptContext::executeInNewThread(RBX::Security::Identities identity, const
 		// Check for somebody using CheatEngine to inject a direct call.
 		// They probably haven't used a scoped_write_request
 #if !defined(RBX_STUDIO_BUILD)
-        VMProtectBeginMutation("4");
+        //VMProtectBeginMutation("4");
 		if (DataModel* dataModel = DataModel::get(this))
 		{
 			if (!dataModel->currentThreadHasWriteLock())
 				dataModel->addHackFlag(HATE_ILLEGAL_SCRIPTS);
 		}
-        VMProtectEnd();
+        //VMProtectEnd();
 #endif
 
 		resume(safeThread, pushArguments, readImmediateResults);
@@ -2757,9 +2756,9 @@ void ScriptContext::onServiceProvider(ServiceProvider* oldProvider, ServiceProvi
             globalStates[Security::VM_RobloxScriptPlus].state->l_G->ckey = LuaVM::getKeyCore();
         }
 
-        VMProtectBeginVirtualization("");
+        //VMProtectBeginVirtualization("");
         securityAnchor.update(&(this->securityAnchor));
-        VMProtectEnd();
+        //VMProtectEnd();
 
 		if (FLog::LuaScriptTimeoutSeconds > 0) {
 			setTimeout(FLog::LuaScriptTimeoutSeconds);

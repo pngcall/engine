@@ -18,7 +18,7 @@ LOGGROUP(Graphics)
 
 FASTFLAGVARIABLE(DebugGraphicsGL, false)
 
-FASTFLAGVARIABLE(GraphicsGL3, false)
+FASTFLAGVARIABLE(GraphicsGL3, true)
 
 FASTFLAG(RenderVR)
 

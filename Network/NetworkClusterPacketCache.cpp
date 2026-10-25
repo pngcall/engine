@@ -105,8 +105,8 @@ void ClusterPacketCacheBase<Key>::onServiceProvider(ServiceProvider* oldProvider
 }
 
 // Explicit template instantiation
-template class ClusterPacketCacheBase<StreamRegion::Id>;
-template class ClusterPacketCacheBase<SpatialRegion::Id>;
+template class RBX::Network::ClusterPacketCacheBase<StreamRegion::Id>;
+template class RBX::Network::ClusterPacketCacheBase<SpatialRegion::Id>;
 
 void ClusterPacketCache::terrainCellChanged(const Voxel::CellChangeInfo& cell)
 {

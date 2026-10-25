@@ -12,7 +12,7 @@
 
 uint32_t staticBaseAddress(void)
 {
-    const struct segment_command* command = getsegbyname("__TEXT");
+    const struct segment_command_64* command = getsegbyname("__TEXT");
     uint32_t addr = command->vmaddr;
     return addr;
 }
@@ -40,6 +40,6 @@ uint32_t machODynamicBaseAddress(void)
 
 uint32_t machOTextSize(void)
 {
-    const struct segment_command* command = getsegbyname("__TEXT");
+    const struct segment_command_64* command = getsegbyname("__TEXT");
     return command->vmsize;
 }

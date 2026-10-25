@@ -22,7 +22,7 @@ FASTFLAGVARIABLE(GoogleAnalyticsTrackingEnabled, false)
 DYNAMIC_LOGVARIABLE(GoogleAnalyticsTracking, 0)
 
 DYNAMIC_FASTFLAGVARIABLE(RobloxAnalyticsTrackingEnabled, false)
-DYNAMIC_FASTSTRINGVARIABLE(RobloxAnalyticsURL, "http://test.public.ecs.finobe.ru/")
+DYNAMIC_FASTSTRINGVARIABLE(RobloxAnalyticsURL, "http://test.public.ecs.roblox.com/")
 
 FASTFLAGVARIABLE(DebugAnalyticsForceLotteryWin, false)
 FASTFLAGVARIABLE(SendStudioEventsWithStudioSID, true)

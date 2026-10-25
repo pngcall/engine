@@ -17,7 +17,6 @@ string literals and API calls will look like in a disassembler.
 #include <psapi.h>
 #include <TlHelp32.h>
 
-#include "VMProtectSDK.h"
 #include "FastLog.h"
 
 #include <ctime>
@@ -145,7 +144,7 @@ namespace
 // ScanForCheatEngine. Returns true if we find it.
 bool RBX::vmProtectedDetectCheatEngineIcon()
 {
-	VMProtectBeginMutation("6");
+	//VMProtectBeginMutation("6");
 
 	RGBImages cheatImageTemplates;
 	setupImageArray(cheatImageTemplates);
@@ -231,7 +230,7 @@ bool RBX::vmProtectedDetectCheatEngineIcon()
 	if (hBmpFileBitmap)
 		DeleteObject(hBmpFileBitmap);
 
-    VMProtectEnd();
+    //VMProtectEnd();
 	return result;
 	
 }
@@ -301,7 +300,7 @@ namespace RBX {
 
 BOOL CALLBACK HwndScanner::makeHwndVector(HWND hwnd, LPARAM lParam)
 {
-    VMProtectBeginMutation("7");
+    //VMProtectBeginMutation("7");
     std::vector<fullWindowInfo>* listing = reinterpret_cast<std::vector<fullWindowInfo>* >(lParam);
 
     char className[32];
@@ -357,7 +356,7 @@ BOOL CALLBACK HwndScanner::makeHwndVector(HWND hwnd, LPARAM lParam)
         listing->push_back(thisWindow);
     }
 
-    VMProtectEnd();
+    //VMProtectEnd();
     return TRUE;
 }
 
@@ -513,7 +512,7 @@ bool FileScanner::detectLogUpdate() const
 
 static DWORD WINAPI watchCeLogDir(void* ceWatchHandle)
 {
-    VMProtectBeginMutation("8");
+    //VMProtectBeginMutation("8");
     DWORD waitStatus = WAIT_ABANDONED;
     waitStatus = WaitForSingleObject(ceWatchHandle, INFINITE);
 
@@ -521,7 +520,7 @@ static DWORD WINAPI watchCeLogDir(void* ceWatchHandle)
     {
         ceDetected = true;
     }
-    VMProtectEnd();
+    //VMProtectEnd();
     return 0;
 }
 
@@ -542,7 +541,7 @@ namespace CryptStrings
 // I'm guessing it returns invalid path incorrectly because the path is valid.
 HANDLE setupCeLogWatcher()
 {
-    VMProtectBeginMutation("9");
+    //VMProtectBeginMutation("9");
     // Cheat Engine
     static const unsigned char kCeName[13] = {221, 247, 57, 28, 136, 187, 213, 107, 49, 78, 136, 144, 116}; // 95 : 
     static const unsigned char kCeNameKey = 159;
@@ -607,7 +606,7 @@ HANDLE setupCeLogWatcher()
             ceLogWatcher = CreateThread(NULL, 64*1024, &watchCeLogDir, ceLogWatchHandle, 0, NULL);
         }
     }
-    VMProtectEnd();
+    //VMProtectEnd();
     return ceLogWatcher;
 }
 
@@ -682,7 +681,7 @@ namespace RBX
     // Basic Detection for Sandboxie.  This one is here because it was used to hide CE.
     bool isSandboxie()
     {
-        VMProtectBeginMutation("10");
+        //VMProtectBeginMutation("10");
         unsigned char argString[8];
         const unsigned char encodedString[8] = {97, 17, 233, 248, 152, 203, 198, 221}; // SbieDll
         for (int i = 0; i < 8; ++i)
@@ -691,7 +690,7 @@ namespace RBX
         };
         HMODULE detected = GetModuleHandle(reinterpret_cast<const char*>(argString));
         memset(argString, 0, sizeof(argString));
-        VMProtectEnd();
+        //VMProtectEnd();
         return (detected != NULL);
     }
 
@@ -738,7 +737,7 @@ namespace RBX
 
     DbvmCanary::DbvmCanary()
     {
-        VMProtectBeginMutation(NULL);
+        //VMProtectBeginMutation(NULL);
         canaryCage = CreateMutex(NULL, TRUE, NULL);
         canaryHandle = CreateThread(NULL,NULL,reinterpret_cast<LPTHREAD_START_ROUTINE>(canary),&canaryCage,CREATE_SUSPENDED,NULL);
         ctx.ContextFlags = CONTEXT_DEBUG_REGISTERS;
@@ -751,12 +750,12 @@ namespace RBX
         SetThreadContext(canaryHandle, &ctx);
         hashValue = hashDbgRegs(ctx);
         ResumeThread(canaryHandle);
-        VMProtectEnd();
+        //VMProtectEnd();
     }
 
     void DbvmCanary::checkAndLocalUpdate()
     {
-        VMProtectBeginMutation(NULL);
+        //VMProtectBeginMutation(NULL);
         bool isBadHash = false;
         CONTEXT nextCtx;
         nextCtx.ContextFlags = CONTEXT_DEBUG_REGISTERS;
@@ -771,21 +770,21 @@ namespace RBX
         ctx.Dr2 = (hashValue+2) % 4096;
         ctx.Dr3 = (hashValue+3) % 4096;
         hashValue = hashDbgRegs(ctx);
-        VMProtectEnd();
-        VMProtectBeginVirtualization(NULL);
+        //VMProtectEnd();
+        //VMProtectBeginVirtualization(NULL);
         if (isBadHash)
         {
             Tokens::simpleToken |= HATE_CHEATENGINE_OLD;
             RBX::Security::setHackFlagVmp<LINE_RAND4>(RBX::Security::hackFlag7, HATE_CHEATENGINE_OLD);
         }
-        VMProtectEnd();
+        //VMProtectEnd();
     }
 
     void DbvmCanary::kernelUpdate()
     {
-        VMProtectBeginMutation(NULL);
+        //VMProtectBeginMutation(NULL);
         SetThreadContext(canaryHandle, &ctx);
-        VMProtectEnd();
+        //VMProtectEnd();
     }
 
 #ifdef RBX_RCC_SECURITY

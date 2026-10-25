@@ -128,7 +128,6 @@
 
 #include "util/RbxStringTable.h"
 #include "format_string.h"
-#include "VMProtectSDK.h"
 
 #include "RbxFormat.h"
 
@@ -4103,14 +4102,14 @@ DataModel::scoped_write_transfer::~scoped_write_transfer()
 unsigned int DataModel::allHackFlagsOredTogether() {
     unsigned int result = 0;
 #if !defined(RBX_STUDIO_BUILD)
-	VMProtectBeginMutation("18");
+	//VMProtectBeginMutation("18");
 	boost::mutex::scoped_lock l(hackFlagSetMutex);
 	
 	for (boost::unordered_set<unsigned int>::iterator itr = hackFlagSet.begin();
 			itr != hackFlagSet.end(); ++itr) {
 		result |= *itr;
 	}
-	VMProtectEnd();
+	//VMProtectEnd();
 #endif
 	return result;
 }

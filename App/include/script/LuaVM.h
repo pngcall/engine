@@ -1,6 +1,6 @@
 #pragma once
 
-#if (defined(_WIN32) || (defined(__APPLE__) && !defined(RBX_PLATFORM_IOS))) && !defined(RBX_STUDIO_BUILD)
+#if (defined(_WIN32) || (defined(__APPLE__) && !defined(RBX_PLATFORM_IOS))) && !defined(RBX_STUDIO_BUILD) && !defined(__aarch64__)
 #define RBX_SECURE_DOUBLE
 #endif
 

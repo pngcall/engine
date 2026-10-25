@@ -132,11 +132,13 @@ namespace RBX {
  			> NodesByPos;
 
 		typedef std::multimap<
-			float 
-			,NodesByPos::iterator 
-			,std::less<float>
-			,boost::fast_pool_allocator<float, boost::default_user_allocator_new_delete, boost::details::pool::null_mutex> 
-		> OpenNodesByWeight;
+			float,
+			NodesByPos::iterator,
+			std::less<float>,
+			boost::fast_pool_allocator<std::pair<const float, NodesByPos::iterator>,
+			boost::default_user_allocator_new_delete,
+			boost::details::pool::null_mutex>
+			> OpenNodesByWeight;
 
 		struct PathfindingState
 		{

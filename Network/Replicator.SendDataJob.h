@@ -8,7 +8,6 @@
 #include "v8datamodel/Stats.h"
 #include "V8DataModel/HackDefines.h"
 
-#include "VMProtectSDK.h"
 
 LOGGROUP(NetworkStepsMultipliers)
 DYNAMIC_FASTINTVARIABLE(MaxDataStepsPerCyclic, 5)
@@ -46,7 +45,7 @@ private:
 	virtual Error error(const Stats& stats);
 	virtual TaskScheduler::StepResult stepDataModelJob(const Stats& stats) 
 	{
-		VMProtectBeginMutation("21");
+		//VMProtectBeginMutation("21");
 #if defined(_WIN32) && !defined(RBX_STUDIO_BUILD)
 		// check xxhash integrity
 		if (++countdownToXxhashCheck > dataSendRate) {
@@ -102,7 +101,7 @@ private:
 			}
 			return TaskScheduler::Stepped;
 		}
-		VMProtectEnd();
+		//VMProtectEnd();
 		return TaskScheduler::Done;
 	}
 };

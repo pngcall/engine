@@ -15,12 +15,6 @@
 #include "fmod_errors.h"
 
 
-
-#if FMOD_VERSION != 0x00010702
-#	error Wrong version of fmod.
-#endif
-
-
 namespace RBX 
 {
 	typedef enum 

@@ -884,7 +884,7 @@ void SoundChannel::onChannelEnd(const FMOD_CHANNEL *channel)
 		}
 	}
 
-FMOD_RESULT F_CALLBACK callbackChannelEnd(FMOD_CHANNELCONTROL *channelControl, FMOD_CHANNELCONTROL_TYPE type, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void *commanddata1, void *commanddata2)
+FMOD_RESULT F_CALL callbackChannelEnd(FMOD_CHANNELCONTROL *channelControl, FMOD_CHANNELCONTROL_TYPE type, FMOD_CHANNELCONTROL_CALLBACK_TYPE callbacktype, void *commanddata1, void *commanddata2)
 {
 	FMOD_RESULT fmodResult = FMOD_OK;
 

@@ -1,32 +1,11 @@
-include(Curl)
 include(Base)
 include(Rendering)
-include(VMProtect)
-include(libwww)
 
 include_directories(include)
 include_directories(Lua-5.1.4/src)
 include_directories(../ClientShared)
 include_directories(../Network/include)
 include_directories(../App.BulletPhysics)
-
-include_project_files(App "*")
-
-if(ANDROID OR UNIX)
-  # Force interpretation of C files as C++.
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -xc++ -std=gnu++11 -Wno-reorder")
-endif(ANDROID OR UNIX)
-
-# Add necessary libwww files, and setup some special settings for them.
-set(libwww_cflags "-xc -Wno-unused-but-set-variable")
-list(APPEND SOURCES ${libwww_ROOT}/HTList.c)
-set_source_files_properties(${libwww_ROOT}/HTList.c PROPERTIES COMPILE_FLAGS "${libwww_cflags}")
-list(APPEND SOURCES ${libwww_ROOT}/HTMemory.c)
-set_source_files_properties(${libwww_ROOT}/HTMemory.c PROPERTIES COMPILE_FLAGS "${libwww_cflags}")
-list(APPEND SOURCES ${libwww_ROOT}/HTParse.c)
-set_source_files_properties(${libwww_ROOT}/HTParse.c PROPERTIES COMPILE_FLAGS "${libwww_cflags}")
-list(APPEND SOURCES ${libwww_ROOT}/HTString.c)
-set_source_files_properties(${libwww_ROOT}/HTString.c PROPERTIES COMPILE_FLAGS "${libwww_cflags}")
 
 if(UNIX)
   list(APPEND SOURCES util/Unix/ProgramMemoryChecker.cpp)
@@ -42,25 +21,30 @@ elseif(WIN32)
   list(APPEND HEADERS include/v8datamodel/SleepingJob.h)
 
   list(APPEND SOURCES util/Win/FileSystem.cpp)
-  list(APPEND SOURCES util/md5.c)
   list(APPEND SOURCES util/MemoryStats.cpp)
   list(APPEND SOURCES util/ProgramMemoryChecker.cpp)
   list(APPEND SOURCES util/MachineIdUploader_Windows.cpp)
   list(APPEND SOURCES v8datamodel/SleepingJob.cpp)
 elseif(APPLE)
   list(APPEND HEADERS include/v8datamodel/SleepingJob.h)
+  list(APPEND HEADERS util/Darwin/HttpCocoa.h)
 
   # C++
   list(APPEND SOURCES util/Darwin/StringConv.cpp)
   list(APPEND SOURCES util/Darwin/MachineIdUploader_OSX.cpp)
   list(APPEND SOURCES util/Darwin/MemoryStats.cpp)
-  list(APPEND SOURCES util/md5.c)
 
   # ObjC
   list(APPEND SOURCES util/Darwin/FileSystem.mm)
+  list(APPEND SOURCES util/Darwin/HttpCocoa.mm)
+  set_source_files_properties(
+     v8datamodel/UserInputService.cpp
+     PROPERTIES LANGUAGE OBJCXX
+  )
   
   if (NOT APPLE_IOS)
     list(APPEND SOURCES v8datamodel/SleepingJob.cpp)
+    list(APPEND SOURCES util/Unix/MachOBaseAddr.mm)
   endif(NOT APPLE_IOS)
 endif(ANDROID)
 
@@ -1221,5 +1205,38 @@ list(APPEND SOURCES voxel2/Mesher.cpp)
 list(APPEND SOURCES ../ClientShared/DataModelSerialize.cpp)
 list(APPEND SOURCES ../ClientShared/RobloxServicesTools.cpp)
 
+set_source_files_properties(
+   Lua-5.1.4/src/lzio.c
+   Lua-5.1.4/src/loadlib.c
+   Lua-5.1.4/src/ldump.c
+   Lua-5.1.4/src/lstate.c
+   Lua-5.1.4/src/lundump.c
+   Lua-5.1.4/src/lmathlib.c
+   Lua-5.1.4/src/lcode.c
+   Lua-5.1.4/src/lauxlib.c
+   Lua-5.1.4/src/lapi.c
+   Lua-5.1.4/src/ltablib.c
+   Lua-5.1.4/src/loslib.c
+   Lua-5.1.4/src/lbaselib.c
+   Lua-5.1.4/src/lopcodes.c
+   Lua-5.1.4/src/lparser.c
+   Lua-5.1.4/src/liolib.c
+   Lua-5.1.4/src/ltable.c
+   Lua-5.1.4/src/ldblib.c
+   Lua-5.1.4/src/lgc.c
+   Lua-5.1.4/src/lstring.c
+   Lua-5.1.4/src/print.c
+   Lua-5.1.4/src/lfunc.c
+   Lua-5.1.4/src/ldo.c
+   Lua-5.1.4/src/ltm.c
+   Lua-5.1.4/src/ldebug.c
+   Lua-5.1.4/src/lstrlib.c
+   Lua-5.1.4/src/lmem.c
+   Lua-5.1.4/src/llex.c
+   Lua-5.1.4/src/lobject.c
+   Lua-5.1.4/src/lvm.c
+   Lua-5.1.4/src/linit.c
+   util/gpc.c
+   PROPERTIES LANGUAGE CXX)
+
 add_library(App OBJECT ${SOURCES} ${HEADERS})
-target_compile_options(App PRIVATE -Wno-maybe-uninitialized)

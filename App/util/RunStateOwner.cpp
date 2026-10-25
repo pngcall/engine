@@ -11,7 +11,6 @@
 #include "util/standardout.h"
 #include "Network/Players.h"
 #include "rbx/Log.h"
-#include "VMProtectSDK.h"
 #include "V8DataModel/HackDefines.h"
 #include "V8World/Tolerance.h"
 #include "script/ThreadRef.h"
@@ -212,7 +211,7 @@ public:
         // NoClip Check
         Vector3 noclipHighCheck = Tolerance::maxExtents().max();
         Vector3 noclipLowCheck = Tolerance::maxExtents().min();
-        VMProtectBeginMutation("16");
+        //VMProtectBeginMutation("16");
         if ((lerpCheck > 0.051 || lerpCheck < 0.049)
             || (noclipHighCheck.x < 0.95e6f || noclipHighCheck.y < 0.96e6f || noclipHighCheck.z < 0.97e6f)
             || (noclipLowCheck.x > -0.95e6f || noclipLowCheck.y > -0.96e6f || noclipLowCheck.z > -0.97e6f))
@@ -229,7 +228,7 @@ public:
                 dataModelLocal->addHackFlag(HATE_SPEEDHACK);
             }
         }
-        VMProtectEnd();
+        //VMProtectEnd();
 #endif
 
 		return TaskScheduler::Stepped;

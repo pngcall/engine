@@ -13,7 +13,6 @@
 #include "RakNetTime.h"
 #include "BitStream.h"
 
-#include "VMProtectSDK.h"
 
 namespace RBX {
 namespace Network {
@@ -34,7 +33,7 @@ Replicator::PingItem::PingItem(Replicator* replicator, RakNet::Time time, unsign
 
 bool Replicator::PingItem::write(RakNet::BitStream& bitStream) {
 #if !defined(RBX_STUDIO_BUILD)
-	VMProtectBeginVirtualization(NULL);
+	//VMProtectBeginVirtualization(NULL);
 #endif
 
     boost::scoped_ptr<unsigned int> moreStatsCopy(new unsigned int);
@@ -88,7 +87,7 @@ bool Replicator::PingItem::write(RakNet::BitStream& bitStream) {
     {
         RBX::Tokens::apiToken.addFlagSafe(RBX::kPingItem); // can be changed to addFlagFast later.
     }
-	VMProtectEnd();
+	//VMProtectEnd();
 #endif
 	return true;
 }

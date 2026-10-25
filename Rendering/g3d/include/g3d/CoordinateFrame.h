@@ -30,7 +30,7 @@
 // ====
 
 // Bullet
-#include "../../../App.BulletPhysics/LinearMath/btTransform.h"
+#include "../../../BulletPhysics/LinearMath/btTransform.h"
 // ====
 
 #ifdef _MSC_VER

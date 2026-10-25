@@ -25,14 +25,13 @@
 #include "StringCompressor.h"
 #include "StringTable.h"
 
-#include "VMProtectSDK.h"
 
 #include <boost/algorithm/string.hpp>
 
 FASTSTRINGVARIABLE(ClientExternalBrowserUserAgent, "Roblox/WinInet")
 
-#define ROBLOX_URL_IDENTIFIER "finobe.ru/"
-#define ROBLOXLABS_URL_IDENTIFIER ".quantelix.local/"
+#define ROBLOX_URL_IDENTIFIER "roblox.com/"
+#define ROBLOXLABS_URL_IDENTIFIER ".robloxlabs.com/"
 
 #pragma comment (lib, "Ws2_32.lib")
 
@@ -167,7 +166,7 @@ void RBX::Network::initWithCloudEditSecurity()
 
 void RBX::Network::initWithoutSecurity()
 {
-	VMProtectBeginMutation("22");
+	//VMProtectBeginMutation("22");
 	_isPlayerAuthenticationEnabled = false;
 
 	static SafeInitFree safeInitFree;
@@ -184,7 +183,7 @@ void RBX::Network::initWithoutSecurity()
 
 	// Force instantiation of NetworkSettings singleton
 	NetworkSettings::singleton();
-	VMProtectEnd();
+	//VMProtectEnd();
 }
 
 void RBX::Network::setVersion(const char* version)
@@ -251,7 +250,7 @@ bool RBX::Network::isTrustedContent(const char* url)
 namespace {
 void isDebuggedDirectThreadFunc(weak_ptr<RBX::DataModel> weakDataModel) {
 #if !defined(LOVE_ALL_ACCESS) && !defined(_NOOPT) && !defined(_DEBUG)
-	VMProtectBeginMutation("23");
+	//VMProtectBeginMutation("23");
 	static const int kSleepBetweenChecksMillis = 1500;
 
 	while (true) {
@@ -265,7 +264,7 @@ void isDebuggedDirectThreadFunc(weak_ptr<RBX::DataModel> weakDataModel) {
 
 		boost::this_thread::sleep(boost::posix_time::milliseconds(kSleepBetweenChecksMillis));
 	}
-	VMProtectEnd();
+	//VMProtectEnd();
 #endif
 }
 }

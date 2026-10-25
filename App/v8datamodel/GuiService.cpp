@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-#include "VMProtectSDK.h"
 
 #include "V8DataModel/GuiObject.h"
 #include "V8DataModel/GuiService.h"
@@ -539,7 +538,7 @@ namespace RBX
 	void GuiService::toggleFullscreen()
 	{
 		// People were modifying verbString when it was loaded into a register by using CE.
-		VMProtectBeginMutation(NULL);
+		//VMProtectBeginMutation(NULL);
 
 		std::string verbString = "ToggleFullScreen";
 		Verb* verb = NULL;
@@ -563,7 +562,7 @@ namespace RBX
 			Verb::doItWithChecks(verb, RBX::DataModel::get(this));
 		}
 
-		VMProtectEnd();
+		//VMProtectEnd();
 	}
 
 	bool GuiService::isTenFootInterface()

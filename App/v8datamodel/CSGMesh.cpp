@@ -12,7 +12,6 @@
 #include <streambuf>
 #include <sstream>
 
-#include "VMProtectSDK.h"
 #include "Util/MD5Hasher.h"
 
 FASTFLAGVARIABLE(FixGlowingCSG, true)
@@ -88,7 +87,7 @@ const size_t hashSize = 16;
 
 std::string CSGMesh::createHash(const std::string saltIn) const
 {
-	VMProtectBeginMutation("17");
+	//VMProtectBeginMutation("17");
 
     const size_t verticesSize = vertices.size() * sizeof(CSGVertex);
     const size_t indicesSize = indices.size() * sizeof(unsigned int);
@@ -128,7 +127,7 @@ std::string CSGMesh::createHash(const std::string saltIn) const
 
     std::string hashStr(&hash[0], hashSize + saltSize);
 
-    VMProtectEnd();
+    //VMProtectEnd();
 
     return hashStr;
 }

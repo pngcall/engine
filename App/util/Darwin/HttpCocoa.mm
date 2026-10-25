@@ -18,7 +18,7 @@ namespace io = boost::iostreams;
 #import "HttpCocoa.h"
 
 #include "RbxFormat.h"
-#include "Http.h"
+#include "util/Http.h"
 #include "FastLog.h"
 
 static NSURL* createSanitizedURL(std::string url)

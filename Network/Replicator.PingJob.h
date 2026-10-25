@@ -3,7 +3,6 @@
 #include "Replicator.h"
 #include "V8DataModel/DataModel.h"
 
-#include "VMProtectSDK.h"
 
 
 namespace RBX { namespace Network {
@@ -35,7 +34,7 @@ private:
 
 	virtual TaskScheduler::StepResult stepDataModelJob(const Stats& stats) 
 	{
-		VMProtectBeginMutation("20");
+		//VMProtectBeginMutation("20");
 		if(replicator){
 #ifdef RBX_RCC_SECURITY
             // cvx: this might be moved to a better location.
@@ -56,7 +55,7 @@ private:
 			}
 			return TaskScheduler::Stepped;
 		}
-		VMProtectEnd();
+		//VMProtectEnd();
 		return TaskScheduler::Done;
 	}
 };

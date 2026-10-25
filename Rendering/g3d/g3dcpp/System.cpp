@@ -79,7 +79,7 @@
 #endif
 
 // SIMM include
-#if !defined(G3D_IOS) && !defined(G3D_ANDROID)// ROBLOX
+#if !defined(G3D_IOS) && !defined(__aarch64__) && !defined(G3D_ANDROID)// ROBLOX
 #include <xmmintrin.h>
 #endif
 

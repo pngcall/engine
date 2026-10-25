@@ -15,9 +15,7 @@
 #include <mach/mach_time.h>
 #endif
 
-#ifdef __ANDROID__
 #include <unistd.h>
-#endif
 
 #if defined(_WIN32) && !defined(RBX_PLATFORM_DURANGO)
 #include "Mmsystem.h"

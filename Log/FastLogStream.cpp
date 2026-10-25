@@ -1,9 +1,6 @@
 #include "FastLogStream.h"
-#include <stdio.h>
-
-#ifdef __ANDROID__
+#include <cstdio>
 #include <unistd.h>
-#endif
 
 #ifdef _WIN32
 #include <WinSock2.h>

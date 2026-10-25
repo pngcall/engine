@@ -217,10 +217,8 @@ namespace SystemUtil
     {
 #if RBX_PLATFORM_IOS
         return getFriendlyDeviceName();
-#elif __i386__
-        return "Mac";
 #else
-#error "Unsupported Apple Platform"
+        return "Mac";
 #endif
         
     }
@@ -230,7 +228,7 @@ namespace SystemUtil
     {
 #if RBX_PLATFORM_IOS
         return getDeviceOSVersion();
-#elif __i386__
+#else
         std::ostringstream  s;
         CFStringRef         version = CFCopySystemVersionString();
         char                versionBuffer[ 256 ];
@@ -239,8 +237,6 @@ namespace SystemUtil
         CFStringGetCString(version, versionBuffer, versionSize, kCFStringEncodingUTF8);
         s << "Mac OS X " << &(versionBuffer[8]);
         return s.str();
-#else
-#error "Unsupported Apple Platform"
 #endif
         
     }

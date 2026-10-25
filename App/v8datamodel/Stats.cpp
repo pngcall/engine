@@ -35,7 +35,6 @@ extern std::string robloxVersion; // JNIMain.cpp
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-#include "VMProtectSDK.h"
 DYNAMIC_FASTINTVARIABLE(HttpInfluxHundredthsPercentage, 0)
 DYNAMIC_FASTSTRINGVARIABLE(HttpInfluxURL, "https://onepointtwentyone-misterfusion-1.c.influxdb.com:8087")
 DYNAMIC_FASTSTRINGVARIABLE(HttpInfluxDatabase, "Default")
@@ -473,8 +472,8 @@ static const bool jobsAsArray = true;
 			std::string baseUrl = baseUrlInput;
 
 			RBXASSERT(baseUrl.substr(0, 7) == "http://");
-			if (baseUrl.find("www.finobe.ru") != std::string::npos)
-				baseUrl = "http://logging.service.finobe.ru/";
+			if (baseUrl.find("www.roblox.com") != std::string::npos)
+				baseUrl = "http://logging.service.roblox.com/";
 			else
 				baseUrl.insert(7, "logging.service.");	// Inserted after http://
 			return baseUrl + "Gatherer/LogEntry?Shard=" + shard;
@@ -696,11 +695,11 @@ static const bool jobsAsArray = true;
 				shared_ptr<ScriptContext> sc = shared_from(d->create<ScriptContext>());
 				if (sc)
 				{
-					VMProtectBeginMutation("19");
+					//VMProtectBeginMutation("19");
 					ProtectedString verifiedSource = ProtectedString::fromTrustedSource(script);
 					ContentProvider::verifyRequestedScriptSignature(verifiedSource, "StatsScript", true);
 					sc->executeInNewThread(Security::RobloxGameScript_, verifiedSource, "StatsReporting");
-					VMProtectEnd();
+					//VMProtectEnd();
 				}
 			}
 			catch (RBX::base_exception&)
@@ -769,7 +768,7 @@ static const bool jobsAsArray = true;
 			/*
 			SettingsConsole.exe gametest get ClientSharedSettings
 			SettingsConsole.exe gametest set ClientSharedSettings.StatsGatheringScriptUrl=
-			SettingsConsole.exe gametest set ClientSharedSettings.StatsGatheringScriptUrl=http://logging.gametest.finobe.ru/GameScript
+			SettingsConsole.exe gametest set ClientSharedSettings.StatsGatheringScriptUrl=http://logging.gametest.roblox.com/GameScript
 			*/
 			// TODO: This is a hack until we have a common way of getting the correct url
 			std::string baseUrl;

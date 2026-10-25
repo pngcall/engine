@@ -10,7 +10,7 @@
 #include "GfxCore/Texture.h"
 #include "GfxCore/Device.h"
 
-#include "freetype/include/ft2build.h"
+#include "ft2build.h"
 #include FT_FREETYPE_H
 #include FT_MODULE_H
 #include FT_TRUETYPE_DRIVER_H
@@ -649,7 +649,7 @@ FASTINTVARIABLE(FontSizePadding, 1)
 			Vector2int16 intAvailableSpace = Vector2int16(availableSpace / scale);
 			Vector2int16 intSize = layout(stringUnicode, NULL, height, intAvailableSpace, useAvailableSpace, DFFlag::TextScaleDontWrapInWords, textFits);
 
-			if (DFFlag::TextScaleDontWrapInWords && textFits == false) {
+			if (DFFlag::TextScaleDontWrapInWords && textFits && *textFits == false) {
 				intSize = layout(stringUnicode, NULL, height, intAvailableSpace, useAvailableSpace, false, textFits);
 			}
 
@@ -660,7 +660,7 @@ FASTINTVARIABLE(FontSizePadding, 1)
 		{
 			if (lines)
 			{
-				GlyphLine line = {stringUnicode.data() + lineStart, lineEnd - lineStart, yoffset, width};
+				GlyphLine line = {stringUnicode.data() + lineStart, static_cast<unsigned int>(lineEnd - lineStart), yoffset, width};
 
 				lines->push_back(line);
 			}

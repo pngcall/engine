@@ -1,8 +1,4 @@
-include(Boost)
-include(tbb)
 include(Base)
-
-include_project_files(Base "*")
 
 include_directories(include)
 

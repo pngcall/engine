@@ -10,7 +10,6 @@
 #include "V8DataModel/DataModel.h"
 #include "security/ApiSecurity.h"
 #include "v8datamodel/HackDefines.h"
-#include "VMProtectSDK.h"
 
 LOGVARIABLE(InstanceTreeManipulation, 0)
 
@@ -608,9 +607,9 @@ bool Instance::setParentInternal(Instance* newParent, bool ignoreLock)
 #if !defined(RBX_RCC_SECURITY) && !defined(RBX_STUDIO_BUILD) && !defined(_NOOPT) && !defined(_DEBUG) && defined(_WIN32) && !defined(RBX_PLATFORM_DURANGO)
     if (detectedExploit)
     {
-        VMProtectBeginVirtualization(NULL);
+        //VMProtectBeginVirtualization(NULL);
         RBX::Security::setHackFlagVs<0>(RBX::Security::hackFlag3, HATE_SEH_CHECK);
-        VMProtectEnd();
+        //VMProtectEnd();
     }
 #endif
 	

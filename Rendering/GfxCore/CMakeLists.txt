@@ -1,19 +1,19 @@
 include(Rendering)
 
-include_project_files(GfxCore "*")
-
 include_directories(include)
 include_directories(glew)
 include_directories(GL)
 
-if(ANDROID)
-  list(APPEND SOURCES GL/ContextGLAndroid.cpp)
-elseif(WIN32)
-  list(APPEND SOURCES GL/ContextGLWin32.cpp)
-elseif(APPLE)
-  list(APPEND SOURCES GL/ContextGLEAGL.mm)
-  list(APPEND SOURCES GL/ContextGLNSGL.mm)
-endif(ANDROID)
+#if(ANDROID)
+#  list(APPEND SOURCES GL/ContextGLAndroid.cpp)
+#elseif(WIN32)
+#  list(APPEND SOURCES GL/ContextGLWin32.cpp)
+#elseif(APPLE)
+#  list(APPEND SOURCES GL/ContextGLMac.mm)
+#  list(APPEND SOURCES GL/ContextGLiOS.mm)
+#endif(ANDROID)
+
+list(APPEND SOURCES GL/ContextGLSDL2.cpp)
 
 list(APPEND HEADERS GL/ContextGL.h)
 list(APPEND HEADERS GL/DeviceGL.h)

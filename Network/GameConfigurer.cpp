@@ -40,7 +40,6 @@
 #include "GamePerfMonitor.h"
 #include "Network/Players.h"
 #include "util/rbxrandom.h"
-#include "../win/sharedlauncher.h"
 #include <vector>
 
 #include "StringConv.h"
@@ -586,8 +585,8 @@ void PlayerConfigurer::configure(RBX::Security::Identities identity, DataModel* 
 
     // Client-side A/B testing setup
     // urls to try:
-    // https://api.gametest1.quantelix.local/users/get-experiment-enrollments  
-    // https://api.gametest1.quantelix.local/users/get-studio-experiment-enrollments
+    // https://api.gametest1.robloxlabs.com/users/get-experiment-enrollments
+    // https://api.gametest1.robloxlabs.com/users/get-studio-experiment-enrollments
 
     std::string baseUrl = RBX::ContentProvider::getUnsecureApiBaseUrl(GetBaseURL());
 
@@ -759,12 +758,12 @@ void PlayerConfigurer::onPlayerChanged(const Reflection::PropertyDescriptor* pro
 			analyticsPoints.addPoint("GameJoin", RBX::Time::nowFastSec());
 
 			std::string successCounterByOsAndLaunchType = "GameJoinSuccess_" + DebugSettings::singleton().osPlatform();
-			if (launchMode == SharedLauncher::Play)
+			if (launchMode == 0)
 			{
 				successCounterByOsAndLaunchType += "_Plugin";
 				analyticsPoints.addPoint("Mode", "Play");
 			}
-			else if (launchMode == SharedLauncher::Play_Protocol)
+			else if (launchMode == 1)
 			{
 				successCounterByOsAndLaunchType += "_Protocol";
 				analyticsPoints.addPoint("Mode", "ProtocolPlay");

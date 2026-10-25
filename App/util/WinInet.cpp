@@ -504,7 +504,7 @@ namespace RBX
 					std::string currString = s.substr(0,pos);
 
 					if (currString.size() >= 11 &&
-                        (currString.find(".finobe.ru") != std::string::npos || currString.find(".quantelix.local") != std::string::npos))
+                        (currString.find(".roblox.com") != std::string::npos || currString.find(".robloxlabs.com") != std::string::npos))
 						foundIt = true;
 
 					while(!foundIt && !externalRequest)
@@ -521,7 +521,7 @@ namespace RBX
 						safeToLower(currString);
 
                         if (currString.size() >= 11 &&
-                            (currString.find(".finobe.ru") != std::string::npos || currString.find(".quantelix.local") != std::string::npos))
+                            (currString.find(".roblox.com") != std::string::npos || currString.find(".robloxlabs.com") != std::string::npos))
                             foundIt = true;
 
 						if(!foundIt && nextReturn == s.size())

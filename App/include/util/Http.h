@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-
+#include <rbx/intrusive_ptr_target.h>
+#include <rbx/intrusive_weak_ptr.h>
 #include <boost/filesystem.hpp>
 
 #include "rbx/atomic.h"

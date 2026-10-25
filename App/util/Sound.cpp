@@ -15,10 +15,6 @@
 #include "fmod.hpp"
 #include "fmod_errors.h"
 
-#if FMOD_VERSION != 0x00010702
-#	error Wrong version of fmod.
-#endif
-
 // This is equivalent to 500 kB by default
 DYNAMIC_FASTINTVARIABLE(MinSoundStreamSizeBytes, 512000)
 

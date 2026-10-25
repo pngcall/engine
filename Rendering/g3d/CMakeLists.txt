@@ -1,11 +1,6 @@
 include(Base)
 
 include_directories(include)
-foreach(dir gl png zip)
-  include_directories(include/${dir})
-endforeach()
-include_directories(ijg)
-include_directories(../../Log/include)
 
 list(APPEND HEADERS ijg/cderror.h)
 list(APPEND HEADERS ijg/jmorecfg.h)
@@ -101,17 +96,6 @@ list(APPEND HEADERS include/g3d/Vector4.h)
 list(APPEND HEADERS include/g3d/Vector4int8.h)
 list(APPEND HEADERS include/g3d/vectorMath.h)
 list(APPEND HEADERS include/g3d/WrapMode.h)
-
-
-# Add 3rd party code we don't modify.
-# Note: CMake will not notice if these files change
-# when checking deps, but that should be okay.
-file(GLOB SOURCES ijg/*.c;png/*.c;zip/*.c)
-# Don't build a few files that cause multiple definitions.
-list_filter(SOURCES ijg/jidctred.c)
-list_filter(SOURCES ijg/jdphuff.c)
-list_filter(SOURCES ijg/jmemansi.c)
-list_filter(SOURCES ijg/jcphuff.c)
 
 # g3dcpp sources
 list(APPEND SOURCES g3dcpp/AABox.cpp)

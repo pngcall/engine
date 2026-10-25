@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "SDL_scancode.h"
+#include "SDL2/SDL_scancode.h"
 
 #include "Util/KeyCode.h"
 #include "G3D/Vector3.h"

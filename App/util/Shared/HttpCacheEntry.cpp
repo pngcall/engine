@@ -300,12 +300,12 @@ CacheResult CacheResult::update(const char* assetUrl, const char* cdnUrl, const 
 	Header cacheHeader = {
 		gMagic(),                                                               // magic
 		RBX_CACHE_FILE_VERSION,                                                 // version
-		std::min(strlen(cdnUrl), static_cast<size_t>(RBX_CACHE_URL_MAX_LENGTH)),// urlBytes
+        static_cast<uint32_t>(std::min(strlen(cdnUrl), static_cast<size_t>(RBX_CACHE_URL_MAX_LENGTH))),// urlBytes
 		{'\0'},                                                                 // url
 		responseCode,                                                           // responseCode
-		headers.size(),                                                         // responseHeadersSize
+        static_cast<uint32_t>(headers.size()),                                                         // responseHeadersSize
 		calculateHash(headers),                                                 // responseHeadersHash
-		body.size(),                                                            // responseBodySize
+        static_cast<uint32_t>(body.size()),                                                            // responseBodySize
 		calculateHash(body),                                                    // responseBodyHash
 		0                                                                       // reserved
 	};

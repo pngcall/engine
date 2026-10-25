@@ -5,9 +5,6 @@
 #include <algorithm>	// defines std::min and std::max before Windows.h takes over
 
 #include "boost/config/user.hpp"
-#ifndef ROBLOX_BOOST_CONFIGS
-#error	// Please re-get the full boost directory
-#endif
 #include "boost/shared_ptr.hpp"
 
 

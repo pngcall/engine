@@ -13,7 +13,6 @@
 #include "RakNetTime.h"
 #include "BitStream.h"
 
-#include "VMProtectSDK.h"
 
 namespace RBX { 
 namespace Network {

@@ -18,7 +18,6 @@
 #include "Script/ScriptContext.h"
 #include "FastLog.h"
 
-#include "VMProtectSDK.h"
 
 #define MAX_BORDER_SIZE_PIXEL 100
 
@@ -226,7 +225,7 @@ void GuiObject::UpdateTween(Tween& tween, GuiObject* obj, boost::function<void(G
 		if(tween.delayTime <= 0)
 		{
 			updateFunc(obj, tween.start);
-			tween.elapsedTime += std::abs<float>(tween.delayTime);
+			tween.elapsedTime += std::fabs(tween.delayTime);
 		}
 		else
 		{
@@ -2070,7 +2069,7 @@ void GuiButton::onServiceProvider(ServiceProvider* oldProvider, ServiceProvider*
 void GuiButton::setVerb(std::string verbString)
 {
     // People were modifying verbString when it was loaded into a register by using CE.
-    VMProtectBeginMutation(NULL);
+    //VMProtectBeginMutation(NULL);
 	if(Workspace* workspace = ServiceProvider::find<Workspace>(this))
 	{
 #ifdef RBX_STUDIO_BUILD
@@ -2087,7 +2086,7 @@ void GuiButton::setVerb(std::string verbString)
 	}
 	else
 		verbToSet = verbString; // our object isn't in the workspace yet, save string for later use (when we reset our parent)
-    VMProtectEnd();
+    //VMProtectEnd();
 }
 
 void GuiButton::setModal(bool value)
@@ -2387,7 +2386,7 @@ GuiResponse GuiButton::checkForSelectedObjectClick(const shared_ptr<InputObject>
                     {
                         mouseButton1ClickSignal();
 
-						VMProtectBeginMutation(NULL);
+						//VMProtectBeginMutation(NULL);
 						if (verb != NULL)
 						{
 							clicked = false;
@@ -2396,7 +2395,7 @@ GuiResponse GuiButton::checkForSelectedObjectClick(const shared_ptr<InputObject>
 								Verb::doItWithChecks(verb, RBX::DataModel::get(this));
 							}
 						}
-						VMProtectEnd();
+						//VMProtectEnd();
 						lastSelectedObjectEvent = weak_ptr<InputObject>();
                     }
 				}
@@ -2459,7 +2458,7 @@ GuiResponse GuiButton::processMouseEvent(const shared_ptr<InputObject>& event)
     
     GuiResponse answer = Super::processMouseEvent(event);			//We need to call our classParent to deal with the state table
     
-    VMProtectBeginMutation(NULL);
+    //VMProtectBeginMutation(NULL);
     if (verb != NULL && clicked)
     {
         clicked = false;
@@ -2468,7 +2467,7 @@ GuiResponse GuiButton::processMouseEvent(const shared_ptr<InputObject>& event)
             Verb::doItWithChecks(verb, RBX::DataModel::get(this));
         }
     }
-    VMProtectEnd();
+    //VMProtectEnd();
 
     if (sinkEvent) 
 	{

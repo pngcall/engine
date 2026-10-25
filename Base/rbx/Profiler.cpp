@@ -12,63 +12,6 @@ FASTFLAGVARIABLE(OnScreenProfiler, false)
 
 #define NOMINMAX
 
-#ifdef __APPLE__
-#include <boost/thread.hpp>
-#include <boost/function.hpp>
-
-namespace std
-{
-    using boost::thread;
-    using boost::recursive_mutex;
-    using boost::lock_guard;
-    using boost::function;
-
-    enum memory_order
-    {
-        memory_order_relaxed,
-        memory_order_consume,
-        memory_order_acquire,
-        memory_order_release,
-        memory_order_acq_rel,
-        memory_order_seq_cst
-    };
-
-    template <typename T>
-    class atomic
-    {
-    public:
-        atomic()
-        {
-        }
-
-        T load(memory_order order = memory_order_seq_cst) const
-        {
-            T result = value;
-            if (order != memory_order_relaxed) __sync_synchronize();
-            return result;
-        }
-
-        void store(T desired, memory_order order = memory_order_seq_cst)
-        {
-            if (order != memory_order_relaxed) __sync_synchronize();
-            value = desired;
-        }
-
-        T fetch_add(T arg, memory_order order = std::memory_order_seq_cst)
-        {
-            return __sync_fetch_and_add(&value, arg);
-        }
-
-    private:
-        template <int N> struct __attribute__((aligned(N))) pad_t {};
-
-        union { volatile T value; pad_t<sizeof(T)> pad; };
-    };
-}
-
-#define MICROPROFILE_NOCXX11
-#endif
-
 #ifdef __ANDROID__
 #include <android/log.h>
 

@@ -484,7 +484,7 @@ namespace Graphics
 		Vector2int16 intAvailableSpace = Vector2int16(availableSpace / scale);
 		Vector2int16 intSize = layout(s, NULL, sizeIndex, intAvailableSpace, useAvailableSpace, DFFlag::TextScaleDontWrapInWords, textFits);
 
-		if (DFFlag::TextScaleDontWrapInWords && textFits == false) {
+		if (DFFlag::TextScaleDontWrapInWords && textFits && *textFits == false) {
 			intSize = layout(s, NULL, sizeIndex, intAvailableSpace, useAvailableSpace, false, textFits);
 		}
 
@@ -504,7 +504,7 @@ namespace Graphics
 	{
 		if (lines)
 		{
-			GlyphLine line = {s.c_str() + lineStart, lineEnd - lineStart, yoffset, width};
+			GlyphLine line = {s.c_str() + lineStart, static_cast<unsigned int>(lineEnd - lineStart), yoffset, width};
 			
 			lines->push_back(line);
 		}

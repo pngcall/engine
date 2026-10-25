@@ -9,7 +9,6 @@
 #include "Util/http.h"
 #include "util/RbxStringTable.h"
 
-#include "VMProtectSDK.h"
 #include "V8DataModel/Workspace.h"
 #include "network/Player.h"
 #include "network/Players.h"
@@ -459,7 +458,7 @@ void TeleportService::TeleportThreadImpl(shared_ptr<const Reflection::ValueTable
             double timeToSleep = 1000.f - retryTimer.delta().msec();
             if (timeToSleep > 0.f)
             {
-                boost::this_thread::sleep(boost::posix_time::milliseconds(timeToSleep));
+            	boost::this_thread::sleep(boost::posix_time::milliseconds(static_cast<long>(timeToSleep)));
             }
             retryTimer.reset();
         }

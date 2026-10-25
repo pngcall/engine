@@ -11,9 +11,6 @@
 
 #include "util/Http.h"
 #include "util/HttpPlatformImpl.h"
-#undef HAVE_MEMCPY
-#undef HAVE_CTYPE_H
-#include "util/HTW3C.h"
 #include "util/URL.h"
 #include "util/RobloxGoogleAnalytics.h"
 #include "util/standardout.h"
@@ -273,32 +270,16 @@ class HTTPStatistics
 
     static ServiceCategory getServiceCategory(const char* url)
     {
-        if (DFFlag::UseNewUrlClass)
-        {
-            RBX::Url parsed = RBX::Url::fromString(url);
-            if (parsed.pathEquals(DataStore::urlApiPath()))
-            {
-                return ServiceCategoryDataStore;
-            }
-
-            if (parsed.pathEquals(MarketplaceService::urlApiPath()))
-            {
-                return ServiceCategoryMarketPlace;
-            }
-            return ServiceCategoryOther;
-        }
-
-        boost::scoped_ptr<char> chost(HTParse(url, NULL, PARSE_PATH));
-        if (chost.get() == strstr(chost.get(), DataStore::urlApiPath()))
+        RBX::Url parsed = RBX::Url::fromString(url);
+        if (parsed.pathEquals(DataStore::urlApiPath()))
         {
             return ServiceCategoryDataStore;
         }
 
-        if (chost.get() == strstr(chost.get(), MarketplaceService::urlApiPath()))
+        if (parsed.pathEquals(MarketplaceService::urlApiPath()))
         {
             return ServiceCategoryMarketPlace;
         }
-
         return ServiceCategoryOther;
     }
 
@@ -1024,7 +1005,7 @@ bool Http::isMoneySite(const char* url)
         case ATL_URL_SCHEME_HTTPS:
         case ATL_URL_SCHEME_FTP:
         {
-            // only trust urls from finobe.ru
+            // only trust urls from roblox.com
             CString hostName = crack.GetHostName();
             hostName.MakeLower();
             if (hostName.Right(10)=="paypal.com")
@@ -1041,56 +1022,18 @@ bool Http::isMoneySite(const char* url)
     }
 #endif // ifdef _WIN32
 
-    if (DFFlag::UseNewUrlClass)
-    {
-        RBX::Url parsed = RBX::Url::fromString(url);
+    RBX::Url parsed = RBX::Url::fromString(url);
 
-        return parsed.hasHttpScheme() &&
-            (parsed.isSubdomainOf("paypal.com") || parsed.isSubdomainOf("rixty.com"));
-    }
-    
-    std::string host;
-	boost::scoped_ptr<char> cscheme(HTParse(url, NULL, PARSE_ACCESS));
-	if (!isValidScheme(cscheme.get()))
-	{
-		return false;
-	}
-
-	boost::scoped_ptr<char> chost(HTParse(url, NULL, PARSE_HOST));
-	host = chost.get();
-
-    std::transform(host.begin(), host.end(), host.begin(), ::tolower);
-
-    // Only trust urls from finobe.ru.
-    if ("paypal.com" == host || hasEnding(host, ".paypal.com"))
-    {
-        return true;
-    }
-    if ("rixty.com" == host || hasEnding(host, ".rixty.com"))
-    {
-        return true;
-    }
-
-    return false;
+    return parsed.hasHttpScheme() &&
+        (parsed.isSubdomainOf("paypal.com") || parsed.isSubdomainOf("rixty.com"));
 }
 
 // This allows just roblox domains, not roblox trusted domains like facebook.
 bool Http::isStrictlyRobloxSite(const char* url)
 {
-    if (DFFlag::UseNewUrlClass)
-    {
-        RBX::Url parsed = RBX::Url::fromString(url);
-    
-        return parsed.isSubdomainOf("finobe.ru") || parsed.isSubdomainOf("quantelix.local");
-    }
+    RBX::Url parsed = RBX::Url::fromString(url);
 
-    std::string host(HTParse(url, NULL, PARSE_HOST));
-    if ("finobe.ru" != host && !hasEnding(host, ".finobe.ru") 
-        && "quantelix.local" != host && !hasEnding(host, ".quantelix.local"))
-    {
-        return false;
-    }
-    return true;
+    return parsed.isSubdomainOf("roblox.com") || parsed.isSubdomainOf("robloxlabs.com");
 }
 
 bool Http::isRobloxSite(const char* url)
@@ -1118,8 +1061,8 @@ bool Http::isRobloxSite(const char* url)
             CString urlPath = crack.GetUrlPath();
             urlPath.MakeLower();
 
-            // trust urls from finobe.ru
-			if (hostName.Right(9)=="finobe.ru" || hostName.Right(15)=="quantelix.local")
+            // trust urls from roblox.com
+			if (hostName.Right(9)=="roblox.com" || hostName.Right(15)=="robloxlabs.com")
 				return true;
 
             return false;
@@ -1131,74 +1074,40 @@ bool Http::isRobloxSite(const char* url)
         }
     }
 #endif // ifdef _WIN32
-    
-    if (DFFlag::UseNewUrlClass)
-    {
-        RBX::Url parsed = RBX::Url::fromString(url);
-        if (!parsed.hasHttpScheme())
-        {
-            return false;
-        }
-    
-        const bool isRoblox =
-            parsed.isSubdomainOf("finobe.ru") ||
-            parsed.isSubdomainOf("quantelix.local");
 
-        const bool isFacebook =
-            ("login.facebook.com" == parsed.host()
-                && parsed.pathEqualsCaseInsensitive("/login.php")) ||
-            ("ssl.facebook.com" == parsed.host()
-                && parsed.pathEqualsCaseInsensitive("/connect/uiserver.php")) ||
-            ("www.facebook.com" == parsed.host()
-                && (parsed.pathEqualsCaseInsensitive("/connect/uiserver.php")
-                    || parsed.pathEqualsCaseInsensitive("/logout.php")));
-        
-        const bool isYoutube =
-            ("www.youtube.com" == parsed.host()
-                && (parsed.pathEqualsCaseInsensitive("/auth_sub_request")
-                || parsed.pathEqualsCaseInsensitive("/signin")
-                || parsed.pathEqualsCaseInsensitive("/issue_auth_sub_token"))) ||
-            ("uploads.gdata.youtube.com" == parsed.host());
-        
-        const bool isGoogle =
-            ("www.google.com" == parsed.host()
-                && parsed.pathEqualsCaseInsensitive("/accounts/serviceloginauth")) ||
-            ("accounts.google.com" == parsed.host()
-                && parsed.pathEqualsCaseInsensitive("/serviceloginauth"));
-
-        return isRoblox || isFacebook || isYoutube || isGoogle;
-    } // if (DFFlag::UseNewUrlClass)
-
-    std::string host;
-    std::string path;
-
-    boost::scoped_ptr<char> cscheme(HTParse(url, NULL, PARSE_ACCESS));
-    if (!isValidScheme(cscheme.get()))
+    RBX::Url parsed = RBX::Url::fromString(url);
+    if (!parsed.hasHttpScheme())
     {
         return false;
     }
 
-    boost::scoped_ptr<char> chost(HTParse(url, NULL, PARSE_HOST));
-    host = chost.get();
+    const bool isRoblox =
+        parsed.isSubdomainOf("roblox.com") ||
+        parsed.isSubdomainOf("robloxlabs.com");
 
-    boost::scoped_ptr<char> cpath(HTParse(url, NULL, PARSE_PATH));
-    path = cpath.get();
+    const bool isFacebook =
+        ("login.facebook.com" == parsed.host()
+            && parsed.pathEqualsCaseInsensitive("/login.php")) ||
+        ("ssl.facebook.com" == parsed.host()
+            && parsed.pathEqualsCaseInsensitive("/connect/uiserver.php")) ||
+        ("www.facebook.com" == parsed.host()
+            && (parsed.pathEqualsCaseInsensitive("/connect/uiserver.php")
+                || parsed.pathEqualsCaseInsensitive("/logout.php")));
 
-    std::transform(host.begin(), host.end(), host.begin(), ::tolower);
-    std::transform(path.begin(), path.end(), path.begin(), ::tolower);
+    const bool isYoutube =
+        ("www.youtube.com" == parsed.host()
+            && (parsed.pathEqualsCaseInsensitive("/auth_sub_request")
+            || parsed.pathEqualsCaseInsensitive("/signin")
+            || parsed.pathEqualsCaseInsensitive("/issue_auth_sub_token"))) ||
+        ("uploads.gdata.youtube.com" == parsed.host());
 
-    return
-        "finobe.ru" == host || hasEnding(host, ".finobe.ru") ||
-        "quantelix.local" == host || hasEnding(host, ".quantelix.local") ||
-        // trust facebook login
-        ("login.facebook.com" == host && "/login.php") ||
-        ("ssl.facebook.com" == host && "/connect/uiserver.php" == path) ||
-        ("www.facebook.com" == host && ("/connect/uiserver.php" == path || "/logout.php" == path)) ||
-        // trust google/youtube upload/auth
-        ("www.youtube.com" == host && ("/auth_sub_request" == path || "/signin" == path || "/issue_auth_sub_token" == path)) ||
-        ("uploads.gdata.youtube.com" == host) ||
-        ("www.google.com" == host && "/accounts/serviceloginauth" == path) ||
-        ("accounts.google.com" == host && "/serviceloginauth" == path);
+    const bool isGoogle =
+        ("www.google.com" == parsed.host()
+            && parsed.pathEqualsCaseInsensitive("/accounts/serviceloginauth")) ||
+        ("accounts.google.com" == parsed.host()
+            && parsed.pathEqualsCaseInsensitive("/serviceloginauth"));
+
+    return isRoblox || isFacebook || isYoutube || isGoogle;
 }
 
 bool Http::trustCheckBrowser(const char* url)
@@ -1223,41 +1132,21 @@ bool Http::isExternalRequest(const char* url)
 
         std::string hostname = urlParsed.GetHostName();
 
-        if(hostname.find("finobe.ru") != std::string::npos || hostname.find("quantelix.local") != std::string::npos)
+        if(hostname.find("roblox.com") != std::string::npos || hostname.find("robloxlabs.com") != std::string::npos)
             return false;
 
         return true;
     }
 #endif // ifdef _WIn32
 
-    if (DFFlag::UseNewUrlClass)
-    {
-        RBX::Url parsed = RBX::Url::fromString(url);
-        if (!parsed.hasHttpScheme())
-        {
-            return false;
-        }
-
-        return !parsed.isSubdomainOf("finobe.ru")
-            && !parsed.isSubdomainOf("quantelix.local");
-    }
-
-    std::string host;
-
-    boost::scoped_ptr<char> cscheme(HTParse(url, NULL, PARSE_ACCESS));
-    if (!isValidScheme(cscheme.get()))
+    RBX::Url parsed = RBX::Url::fromString(url);
+    if (!parsed.hasHttpScheme())
     {
         return false;
     }
 
-    boost::scoped_ptr<char> chost(HTParse(url, NULL, PARSE_HOST));
-    host = chost.get();
-
-    std::transform(host.begin(), host.end(), host.begin(), ::tolower);
-
-    return
-        "finobe.ru" != host && !hasEnding(host, ".finobe.ru") &&
-        "quantelix.local" != host && !hasEnding(host, ".quantelix.local");
+    return !parsed.isSubdomainOf("roblox.com")
+        && !parsed.isSubdomainOf("robloxlabs.com");
 }
 
 void Http::setProxy(const std::string& host, long port)

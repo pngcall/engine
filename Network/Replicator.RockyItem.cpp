@@ -1,7 +1,6 @@
 #include "Replicator.RockyItem.h"
 
 #include "Item.h"
-#include "VMProtectSDK.h"
 #include "NetPmc.h"
 #include "ClientReplicator.h"
 #include "v8datamodel/DataModel.h"

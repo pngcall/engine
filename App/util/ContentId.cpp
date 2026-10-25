@@ -7,14 +7,6 @@
 #include <boost/algorithm/string.hpp>
 
 #include "util/LegacyContentTable.h"
-
-// Remove this after removal of FFlag::UseNewUrlClass and defaulting to it
-// {
-#undef HAVE_MEMCPY
-#undef HAVE_CTYPE_H
-#include "util/HTW3C.h"
-// }
-
 #include "util/URL.h"
 
 DYNAMIC_FASTFLAGVARIABLE(UrlReconstructToAssetGame, false);
@@ -157,167 +149,84 @@ namespace RBX
 	{
 		boost::scoped_array<char> url(new char[id.length()+1]);
 
-		// remove any spaces since HTParse stops parsing at the first space and we need to handle "http://www.finobe.ru/asset/?id= 1818"
-		char* urlIter = url.get();
-		for (size_t i = 0; i < id.length(); ++i)
-		{
-			if (id[i] != ' ')
-			{
-				*urlIter = id[i];
-				urlIter++;
-			}
-		}
-		*urlIter = '\0';
-        
-        if (DFFlag::UseNewUrlClass)
+        const RBX::Url parsed = RBX::Url::fromString(url.get());
+
+        // As of 2016-02-09 ContentId::id strings may have following forms:
+        // - http://host/path?query -- a valid HTTP URL
+        // - rbxasset://something/file
+        // - /asset/?query -- these should not be valid
+
+        // Only HTTP URLs are subject for reconstruction
+        if (!parsed.hasHttpScheme())
         {
-            const RBX::Url parsed = RBX::Url::fromString(url.get());
+            return !DFFlag::UrlReconstructRejectInvalidSchemes || parsed.hasValidScheme();
+        }
 
-            // As of 2016-02-09 ContentId::id strings may have following forms:
-            // - http://host/path?query -- a valid HTTP URL
-            // - rbxasset://something/file
-            // - /asset/?query -- these should not be valid
-            
-            // Only HTTP URLs are subject for reconstruction
-            if (!parsed.hasHttpScheme())
-            {
-                return !DFFlag::UrlReconstructRejectInvalidSchemes || parsed.hasValidScheme();
-            }
-            
-            // Refuse to reconstruct malformed URLs
-            if (!parsed.isValid() || parsed.pathIsEmpty())
-            {
-                return false;
-            }
-            
-            // These can be rewritten
-            std::string scheme = parsed.scheme();
-            std::string host = parsed.host();
-            std::string path = parsed.path();
-
-            static const std::string testsite_domain = "quantelix.local";
-
-            const RBX::Url baseUrlParsed = RBX::Url::fromString(baseUrl);
-
-            for (int i = 0; i < pathCount; i++)
-            {
-                if (parsed.pathEqualsCaseInsensitive(paths[i]))
-                {
-                    if (DFFlag::UrlReconstructToAssetGame)
-                    {
-                        // Allow assets from prod to be used on test sites
-                        if (baseUrlParsed.isSubdomainOf(testsite_domain)
-                            && !parsed.isSubdomainOf(testsite_domain))
-                        {
-                            host = "assetgame.finobe.ru";
-                        }
-                        else
-                        {
-                            scheme = baseUrlParsed.scheme();
-                            host = baseUrlParsed.host();
-                            
-                            if (boost::starts_with(host, "www."))
-                            {
-                                host.replace(0, 3, "assetgame");
-                            }
-                        }
-
-                        if (DFFlag::UrlReconstructToAssetGameSecure)
-                        {
-                            scheme = "https";
-                        }
-                    }
-                    else
-                    {
-                        if (parsed.isSubdomainOf(testsite_domain))
-                        {
-                            scheme = baseUrlParsed.scheme();
-                            host = baseUrlParsed.host();
-                            path = baseUrlParsed.path() + path;
-                        }
-                        else
-                        {
-                            scheme = "http";
-                            host = "www.finobe.ru";
-                        }
-                    }
-
-                    id = RBX::Url::fromComponents(scheme, host, path, parsed.query(), parsed.fragment()).asString();
-
-                    return true;
-                }
-            } // for all paths[]
-            
+        // Refuse to reconstruct malformed URLs
+        if (!parsed.isValid() || parsed.pathIsEmpty())
+        {
             return false;
-        } // if (DFFlag::UseNewUrlClass)
+        }
 
-        // parse out host and path
-        char* simplifiedUrl = url.get();
-        simplifiedUrl = HTSimplify(&simplifiedUrl);
-        boost::scoped_ptr<char> chost(HTParse(simplifiedUrl, NULL, PARSE_HOST));
-        boost::scoped_ptr<char> cscheme(HTParse(simplifiedUrl, NULL, PARSE_ACCESS));
-        boost::scoped_ptr<char> cpath(HTParse(simplifiedUrl, NULL, PARSE_PATH));
+        // These can be rewritten
+        std::string scheme = parsed.scheme();
+        std::string host = parsed.host();
+        std::string path = parsed.path();
 
-        std::string scheme = cscheme.get();
-        std::string path = cpath.get();
-        std::string host = chost.get();
+        static const std::string testsite_domain = "robloxlabs.com";
 
-        if (scheme != "http" && scheme != "https")
-            return true;
-
-        // remove any leading '/' from path
-        int pathStart = path.find_first_not_of("/");
-        if (pathStart == std::string::npos)
-            return false; // invalid path
-
-        path = path.substr(pathStart);
+        const RBX::Url baseUrlParsed = RBX::Url::fromString(baseUrl);
 
         for (int i = 0; i < pathCount; i++)
         {
-            size_t pathLength = strlen(paths[i]);
-
-            if (boost::istarts_with(path, paths[i]) && (path.size() == pathLength || path[pathLength] == '?'))
+            if (parsed.pathEqualsCaseInsensitive(paths[i]))
             {
-                static const char* domain = ".quantelix.local";
-
                 if (DFFlag::UrlReconstructToAssetGame)
                 {
                     // Allow assets from prod to be used on test sites
-                    if (baseUrl.find(domain) != std::string::npos && host.find(domain) == std::string::npos)
-                        id = "http://www.finobe.ru/" + path;
-                    else
-                        id = baseUrl + (baseUrl[baseUrl.size()-1] != '/' ? "/" : "") + path;
-
-                    if (DFFlag::UrlReconstructToAssetGameSecure)
+                    if (baseUrlParsed.isSubdomainOf(testsite_domain)
+                        && !parsed.isSubdomainOf(testsite_domain))
                     {
-                        // Note that we rewrite both HTTP and HTTPS to use HTTPS since web team wants to do HTTPS-exclusive calls
-                        if (boost::starts_with(id, "http://www."))
-                            id = "https://assetgame." + id.substr(11);
-                        else if (boost::starts_with(id, "https://www."))
-                            id = "https://assetgame." + id.substr(12);
+                        host = "assetgame.roblox.com";
                     }
                     else
                     {
-                        if (boost::starts_with(id, "http://www."))
-                            id = "http://assetgame." + id.substr(11);
-                        else if (boost::starts_with(id, "https://www."))
-                            id = "https://assetgame." + id.substr(12);
+                        scheme = baseUrlParsed.scheme();
+                        host = baseUrlParsed.host();
+
+                        if (boost::starts_with(host, "www."))
+                        {
+                            host.replace(0, 3, "assetgame");
+                        }
+                    }
+
+                    if (DFFlag::UrlReconstructToAssetGameSecure)
+                    {
+                        scheme = "https";
                     }
                 }
                 else
                 {
-                    size_t robloxLabsPos = host.find(domain);
-                    if (robloxLabsPos != std::string::npos)
-                        id = baseUrl + "/" + path;
+                    if (parsed.isSubdomainOf(testsite_domain))
+                    {
+                        scheme = baseUrlParsed.scheme();
+                        host = baseUrlParsed.host();
+                        path = baseUrlParsed.path() + path;
+                    }
                     else
-                        id = "http://www.finobe.ru/" + path;
+                    {
+                        scheme = "http";
+                        host = "www.roblox.com";
+                    }
                 }
+
+                id = RBX::Url::fromComponents(scheme, host, path, parsed.query(), parsed.fragment()).asString();
 
                 return true;
             }
         } // for all paths[]
 
-		return false;
+        return false;
 	}
 
 	bool ContentId::reconstructAssetUrl(const std::string& baseUrl)

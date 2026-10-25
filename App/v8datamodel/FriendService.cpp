@@ -34,9 +34,9 @@ FriendService::FriendService()
 	:enable(false)
 {
 	setName(sFriendService);
-	//setMakeFriendUrl("http://siteapp3.finobe.ru/Friend/CreateFriend?firstUserId=%d&secondUserId=%d");
-	//setGetFriendsUrl("http://siteapp3.finobe.ru/Friend/AreFriends?userId=%d");
-	//setBreakFriendUrl("http://siteapp3.finobe.ru/Friend/BreakFriend?firstUserId=%d&secondUserId=%d");
+	//setMakeFriendUrl("http://siteapp3.roblox.com/Friend/CreateFriend?firstUserId=%d&secondUserId=%d");
+	//setGetFriendsUrl("http://siteapp3.roblox.com/Friend/AreFriends?userId=%d");
+	//setBreakFriendUrl("http://siteapp3.roblox.com/Friend/BreakFriend?firstUserId=%d&secondUserId=%d");
 }
 
 void FriendService::setEnable(bool value)

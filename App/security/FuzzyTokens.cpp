@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "security/FuzzyTokens.h"
-#include "VMProtectSDK.h"
 
 namespace RBX
 {
